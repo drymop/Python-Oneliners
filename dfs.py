@@ -36,7 +36,7 @@ dfs = lambda s, t, edges, visited, dfs_func: (
             # this create a valid path or None
             next(
                 filter(None,
-                    (dfs_func(v, t, edges, visited, dfs_func) for v,w in edges[s].items() if w > 0) # result of all recursive call on neighbors 
+                    (dfs_func(v, t, edges, visited, dfs_func) for v,w in edges.get(s, {}).items() if w > 0) # result of all recursive call on neighbors 
                 ), # throw out all results that are None
                 None  # if all results from recursive call are None, return None
             )
@@ -44,7 +44,7 @@ dfs = lambda s, t, edges, visited, dfs_func: (
 )
 
 # compact version
-dfs_compact = lambda s,t,E,A,f: [t] if s==t else None if s in A else A.add(s) or (lambda p: p and p.append(s) or p)(next(filter(None, (f(v,t,E,A,f) for v,w in E[s].items() if w>0)), None))
+dfs_compact = lambda s,t,E,A,f: [t] if s==t else None if s in A else A.add(s) or (lambda p: p and p.append(s) or p)(next(filter(None, (f(v,t,E,A,f) for v,w in E.get(s,{}).items() if w>0)), None))
 
 
 # test
