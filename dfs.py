@@ -5,6 +5,9 @@
 # in reverse order (e.g. [t, c, b, a, s])
 # Return None if no path is found
 #
+# Note: Since this algorithm is recursive, it only works reliably
+# if there is no path longer than Python max recursion depth.
+#
 # Usage:
 #   dfs(s, t, edges, set(), dfs)
 #
@@ -13,7 +16,9 @@
 #   t: destination node
 #   edges: map vertex to dictionary, such that edges[v][u] = w 
 #          where v, u are vertices and w is the weight of edge (v, u)
-
+#   visited: set of visited vertices, should start off as an empty set.
+#   dfs_func: this function, inserted as argument to enable recursion
+#
 dfs = lambda s, t, edges, visited, dfs_func: (
     
     # reached the destination, return path which is just [destination]
@@ -45,9 +50,9 @@ dfs_compact = lambda s,t,E,A,f: [t] if s==t else None if s in A else A.add(s) or
 # test
 edges = {
     0: {1: 1, 2: 1},
-    1: {2: 3},
-    2: {0: 2, 3: 1},
-    3: {3: 3, 1: -1}
+    1: {2: 1},
+    2: {0: 1, 3: 1},
+    3: {3: 1, 1: -1}
 }
 print(dfs(2, 1, edges, set(), dfs))
 print(dfs(2, 0, edges, set(), dfs))
