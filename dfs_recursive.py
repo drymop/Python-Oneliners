@@ -3,7 +3,7 @@
 # Only consider edges with positive weight.
 # Return a list of vertices denoting the path from s to t
 # in reverse order (e.g. [t, c, b, a, s])
-# Return None if no path is found
+# Return empty list if no path is found
 #
 # Note: Since this algorithm is recursive, it only works reliably
 # if there is no path longer than Python max recursion depth.
@@ -24,8 +24,8 @@ dfs = lambda s, t, edges, visited, dfs_func: (
     # reached the destination, return path which is just [destination]
     [t] if s == t else
     
-    # already visited this vertex, not a valid path, return None
-    None if s in visited else  
+    # already visited this vertex, not a valid path, return empty list
+    [] if s in visited else  
 
     # s has not been visited, return recursive call on neighbors of s
     visited.add(s) or  # add s to visited set. this method return None, so we can chain 
@@ -38,13 +38,13 @@ dfs = lambda s, t, edges, visited, dfs_func: (
                 filter(None,
                     (dfs_func(v, t, edges, visited, dfs_func) for v,w in edges.get(s, {}).items() if w > 0) # result of all recursive call on neighbors 
                 ), # throw out all results that are None
-                None  # if all results from recursive call are None, return None
+                []  # if all results from recursive call are empty, return empty list
             )
         )
 )
 
 # compact version
-dfs_compact = lambda s,t,E,A,f: [t] if s==t else None if s in A else A.add(s) or (lambda p: p and p.append(s) or p)(next(filter(None, (f(v,t,E,A,f) for v,w in E.get(s,{}).items() if w>0)), None))
+dfs_compact = lambda s,t,E,A,f: [t] if s==t else [] if s in A else A.add(s) or (lambda p: p and p.append(s) or p)(next(filter(None, (f(v,t,E,A,f) for v,w in E.get(s,{}).items() if w>0)), []))
 
 
 # test
