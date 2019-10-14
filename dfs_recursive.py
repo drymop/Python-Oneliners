@@ -48,12 +48,13 @@ dfs_compact = lambda s,t,E,A,f: [t] if s==t else [] if s in A else A.add(s) or (
 
 
 # test
-edges = {
-    0: {1: 1, 2: 1},
-    1: {2: 1},
-    2: {0: 1, 3: 1},
-    3: {3: 1, 1: -1}
-}
-print(dfs(2, 1, edges, set(), dfs))
-print(dfs(2, 0, edges, set(), dfs))
-print(dfs(2, 3, edges, set(), dfs))
+if __name__ == '__main__':
+    edges = {
+        0: {1: 1, 2: 1},
+        1: {2: 1},
+        2: {0: 1, 3: 1},
+        3: {3: 1, 1: -1}
+    }
+    print(dfs(2, 1, edges, set(), dfs))
+    print(dfs(2, 0, edges, set(), dfs))
+    print(dfs(2, 3, edges, set(), dfs))
