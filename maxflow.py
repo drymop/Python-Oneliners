@@ -1,5 +1,5 @@
 from pprint import pprint as pp
-from dfs_recursive import dfs_compact as dfs
+from dfs_recursive import dfs_compact
 
 
 # Ford-Fulkerson algorithm for maxflow
@@ -15,10 +15,12 @@ from dfs_recursive import dfs_compact as dfs
 #   t: sink vertex
 #   edges: map vertex to dictionary, such that edges[v][u] = w 
 #          where v, u are vertices and w is the weight of edge (v, u)
+#   dfs_func: function that take in 2 vertices in a graph, and find a path
+#             between the 2 vertices. See dfs_recursive.py for specification.
 #   var_dict: buffer to store local variable. Simply use an empty dict
 #             as the actual parameter.
 #
-maxflow = lambda s, t, edges, var_dict: ( 
+maxflow = lambda s, t, edges, dfs_func, var_dict: ( 
     # var_dict is used to assign local variable, 
     # since dict.update({"var": value}) is an expression rather than a statement
     # which is allowed inside lambda
@@ -44,7 +46,7 @@ maxflow = lambda s, t, edges, var_dict: (
     # (increase corresponding back edges by the flow, decrease corresponding forward edges by the flow)
     # repeat until no more paths are found
     any(  # loop until a truthy value is encountered (aka while loop)
-        var_dict.update({"path": dfs(s, t, var_dict["edges"], set(), dfs)[::-1]}) or # get a DFS path from s to t
+        var_dict.update({"path": dfs_func(s, t, var_dict["edges"], set(), dfs_func)[::-1]}) or # get a DFS path from s to t
         not var_dict["path"]  # return True to stop loop if no path is found
         or var_dict.update({
             "flow": min(var_dict["edges"][v1][v2] for v1, v2 in zip(var_dict["path"], var_dict["path"][1:]))
@@ -65,12 +67,12 @@ maxflow = lambda s, t, edges, var_dict: (
 #===================================
 # Compact version
 #
-# var_dict (D) keys:
-# edge D[0]
-# maxflow D[1]
-# path D[2]
-# flow D[3]
-maxflow_compact = lambda s,t,E,D:(D.update({0:(lambda E,G:all((G.setdefault(u,{}).update({v:w}),G.setdefault(v,{}).setdefault(u,0))for u,e in E.items() for v,w in e.items())and G)(E,{}),1:0})or any(D.update({2:dfs(s,t,D[0],set(),dfs)[::-1]}) or not D[2]or D.update({3:min(D[0][v][u] for v,u in zip(D[2],D[2][1:]))})or D.update({1:D[1]+D[3]})or any(D[0][v].update({u:D[0][v][u]-D[3]})or D[0][u].update({v:D[0][u][v]+D[3]})for v,u in zip(D[2],D[2][1:]))for _ in iter(int,1))and(D[1],D[0]))
+# local variables:
+# edge:    D[0]
+# maxflow: D[1]
+# path:    D[2]
+# flow:    D[3]
+maxflow_compact = lambda s,t,E,f,D:(D.update({0:(lambda E,G:all((G.setdefault(u,{}).update({v:w}),G.setdefault(v,{}).setdefault(u,0))for u,e in E.items() for v,w in e.items())and G)(E,{}),1:0})or any(D.update({2:f(s,t,D[0],set(),f)[::-1]}) or not D[2]or D.update({3:min(D[0][v][u] for v,u in zip(D[2],D[2][1:]))})or D.update({1:D[1]+D[3]})or any(D[0][v].update({u:D[0][v][u]-D[3]})or D[0][u].update({v:D[0][u][v]+D[3]})for v,u in zip(D[2],D[2][1:]))for _ in iter(int,1))and(D[1],D[0]))
 
 
 #===================================
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     s = 0
     t = 5
     # should get 23
-    maxflow, flow_edges = maxflow_compact(s, t, edges, {})
+    maxflow, flow_edges = maxflow_compact(s, t, edges, dfs_compact, {})
 
     print("========================")
     pp(edges)
