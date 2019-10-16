@@ -32,19 +32,16 @@ dfs = lambda s, t, edges, visited, dfs_func: (
                        # to other values using or operation (None or x results in x) 
         
         # If find a path, return path + [s], otherwise return None
-        (lambda path: path + [s] if path else None)(  # function to return a path or None, given a None-able path
+        (lambda path: path + [s] if path else [])(  # if recursive call find a path, add s to that path. If no path, return no path.
             # this create a valid path or None
-            next(
-                filter(None,
-                    (dfs_func(v, t, edges, visited, dfs_func) for v,w in edges.get(s, {}).items() if w > 0) # result of all recursive call on neighbors 
-                ), # throw out all results that are None
-                []  # if all results from recursive call are empty, return empty list
-            )
+            next(filter(None,
+                (dfs_func(v, t, edges, visited, dfs_func) for v,w in edges.get(s, {}).items() if w > 0) # any recursive call that find a path 
+            ), [])
         )
 )
 
 # compact version
-dfs_compact = lambda s,t,E,A,f: [t] if s==t else [] if s in A else A.add(s) or (lambda p: p and p.append(s) or p)(next(filter(None, (f(v,t,E,A,f) for v,w in E.get(s,{}).items() if w>0)), []))
+dfs_compact = lambda s,t,E,A,f:[t]if s==t else[]if s in A else A.add(s)or(lambda p:p and p.append(s)or p)(next(filter(None,(f(v,t,E,A,f)for v,w in E.get(s,{}).items()if w>0)),[]))
 
 
 # test
